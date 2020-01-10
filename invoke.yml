@@ -1,0 +1,11 @@
+mongo:
+  url: 0.0.0.0
+  db: logs
+  port: 27017
+
+api:
+  host: 0.0.0.0
+  port: 8000
+
+logs:
+  log_file: logs/logs.txt
