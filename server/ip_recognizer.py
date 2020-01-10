@@ -27,10 +27,10 @@ def recognize_ips_countries(db):
             json.dump(countries, f)
 
 
-async def add_ip_countries2db(db):
+def add_ip_countries2db(db):
     filename = './database/ip_countries.json'
     if os.path.exists(filename):
         with open(filename, 'r') as f:
             countries = json.load(f)
     for ip, country in tqdm(countries.items()):
-        await db.add_country_by_ip(ip, country)
+        db.add_country_by_ip(ip, country)

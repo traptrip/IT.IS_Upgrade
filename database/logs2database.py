@@ -1,4 +1,3 @@
-import asyncio
 from tqdm import tqdm
 from datetime import datetime as dt
 
@@ -50,13 +49,12 @@ def logs2database(db, log_file):
             res = url.split('_')[-1][:-1]
             data['cart_id'] = res
         all_data.append(data)  # добавление текущей строки к остальным данным
-    await db.collection.insert_many(all_data)
-    await add_ip_countries2db(db)  # добавление информации о регионе из которого совершено действие на сайте
+    db.collection.insert_many(all_data)
+    add_ip_countries2db(db)  # добавление информации о регионе из которого совершено действие на сайте
 
 
 if __name__ == '__main__':
     from database.mongo import MongoDB
     db = MongoDB('logs', '0.0.0.0', '27017')
     log_file = 'logs/logs.txt'
-    loop = asyncio.get_event_loop()
-    loop.run_until_complete(logs2database(db, log_file))
+    logs2database(db, log_file)

@@ -27,38 +27,36 @@ datetime , ip , action_type , page        , good_category , good_name
 """
 import os
 
-import pandas as pd
-import motor.motor_asyncio
+from pymongo import MongoClient
 
 
 class MongoDB:
     def __init__(self, db_name, host, port):
-        self.db_name = db_name
-        self.uri = os.getenv('DOCKER_MONGO', f"mongodb://{host}:{port}/")
-        self.mongo = motor.motor_asyncio.AsyncIOMotorClient(self.uri)
+        self.url = os.getenv('DOCKER_MONGO', f"mongodb://{host}:{port}/")
+        self.mongo = MongoClient(self.url)
         self.db = self.mongo[db_name]
         self.collection = self.db['logs']
 
-    async def insert_one(self, item):
-        if not await self.collection.find_one(item):
-            await self.collection.insert_one(item)
+    def insert_one(self, item):
+        if not self.collection.find_one(item):
+            self.collection.insert_one(item)
             return True
         else:
             return False
 
-    async def get_unique_ips(self):
+    def get_unique_ips(self):
         return self.collection.distinct("ip")
 
-    async def get_all_actions(self):
+    def get_all_actions(self):
         return self.collection.find()
 
-    async def add_country_by_ip(self, ip, country):
+    def add_country_by_ip(self, ip, country):
         """
         Добавление поля country ко всем строчкам базы данных с определенным ip
         """
-        await self.collection.update_many({"ip": ip}, {"$set": {"country": country}})
+        self.collection.update_many({"ip": ip}, {"$set": {"country": country}})
 
-    async def count_countries(self):
+    def count_countries(self):
         """
         Посетители из какой страны совершают больше всего действий на сайте?
         Считается суммарное посещеиние сайта за все время
@@ -66,13 +64,15 @@ class MongoDB:
         countries_entry = self.collection.aggregate([{"$group": {"_id": "$country", "count": {"$sum": 1}}}])
         return countries_entry
 
-    async def interest_by_country(self):
+    def interest_by_country(self):
         """
         Посетители из какой страны чаще всего интересуются товарами из определенных категорий?
         """
-        category_interest = await self.collection.aggregate(
+        category_interest = self.collection.aggregate(
             [{"$group":
                   {"_id": "$category",
                    "name": {{"_id": "$country", "count": {"$sum": 1}}}}
               }])
         return category_interest
+
+
