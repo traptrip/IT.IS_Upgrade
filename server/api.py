@@ -16,7 +16,7 @@ class DashServer:
 
         def good_categories_items(db):
             """
-            Нахождение всех категорий товаров в базе данных
+            Получение всех категорий товаров в базе данных
             """
             good_categories = db.get_unique_categories()
             res = []
@@ -25,8 +25,8 @@ class DashServer:
             return res
 
         self.app.layout = html.Div(children=[
-            # html.H1('АНАЛИТИКА ПО САЙТУ "ВСЕ НА ДНО!"'),
-            # html.H2('Выполнил: Андрей Попов'),
+            html.H1('АНАЛИТИКА ПО САЙТУ "ВСЕ НА ДНО!"'),
+            html.H2('Выполнил: Андрей Попов'),
 
             dcc.Dropdown(
                 id='menu',
@@ -43,7 +43,6 @@ class DashServer:
 
                     {'label': 'Нагрузка на сайт', 'value': 'site_load'},
                     {'label': 'Количество неоплаченных корзин за определенный период', 'value': 'unpaid_carts'},
-                    # {'label': 'Количество повторных покупок', 'value': 'repeated_purchases'},
                 ],
                 value='top_countries',
                 placeholder='Выберете интересующую информацию...'
@@ -127,6 +126,7 @@ class DashServer:
                 out_format[4] = 1
             return [{'display': 'block'} if i else {'display': 'none'} for i in out_format]
 
+        # Функция отрисовывающая вэб страницу
         @self.app.callback(
             [Output(component_id='graph', component_property='figure'),
              Output(component_id='msg', component_property='children')],
