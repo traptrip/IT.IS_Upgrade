@@ -1,7 +1,7 @@
-FROM python:3.6
+FROM python:3.7
 
-COPY Pipfile Pipfile.lock ./
-RUN pip install pipenv && pipenv install --system
+COPY requirements.txt ./
+RUN pip install -r requirements.txt
 
 ARG APP_DIR=/simple_analitics_server
 WORKDIR "$APP_DIR"

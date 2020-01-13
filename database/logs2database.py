@@ -1,6 +1,3 @@
-from tqdm import tqdm
-from datetime import datetime as dt
-
 from server.ip_recognizer import add_ip_countries2db
 
 
@@ -12,14 +9,14 @@ def logs2database(db, log_file):
         logs = file.read().split(sep='\n')
 
     all_data = []
-    for log in tqdm(logs):
+    for log in logs:
         if len(log) == 0:  # исключоет пустые строки в логах
             continue
 
         log = log.split()  # разбиение логов по пробелам
         data = dict()
-        data_time = log[2] + ' ' + log[3]
-        data['datetime'] = dt.strptime(data_time, "%Y-%m-%d %H:%M:%S")
+        data['date'] = log[2]
+        data['time'] = log[3]
         data['ip'] = log[-2]
         url = log[-1]
         if '?' not in url and 'success' not in url:
@@ -51,10 +48,3 @@ def logs2database(db, log_file):
         all_data.append(data)  # добавление текущей строки к остальным данным
     db.collection.insert_many(all_data)
     add_ip_countries2db(db)  # добавление информации о регионе из которого совершено действие на сайте
-
-
-if __name__ == '__main__':
-    from database.mongo import MongoDB
-    db = MongoDB('logs', '0.0.0.0', '27017')
-    log_file = 'logs/logs.txt'
-    logs2database(db, log_file)
