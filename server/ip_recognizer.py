@@ -28,6 +28,9 @@ def recognize_ips_countries(db):
 
 
 def add_ip_countries2db(db):
+    """
+    Добавление страны к каждому логу
+    """
     filename = './database/ip_countries.json'
     if os.path.exists(filename):
         with open(filename, 'r') as f:
